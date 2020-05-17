@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloud8-config
+  namespace: default
+  labels:
+    stack: cloud8
+data:
+  SPRING_PROFILES_ACTIVE: docker,kubernetes
+  JAEGER_AGENT_HOST: jaegertrace.default
+  API_URL: http://localhost:1080/v2/api-docs?group=api
+  CONFIG_HOST: http://configservice.default:8087
+  CONFIG_GIT_REPOSITORY: https://git.8x8.com/platform/ms/cloud8-config-service-backend.git
+  GIT_USER: jenkins
+  GIT_PASSWORD: xxx

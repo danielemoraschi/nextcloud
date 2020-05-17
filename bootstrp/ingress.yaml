@@ -1,0 +1,59 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: catalogue-ingress
+  namespace: default
+  labels:
+    stack: cloud8
+  annotations:
+    ingress.kubernetes.io/rewrite-target: "/"
+spec:
+  rules:
+# * Spring-boot admin : http://127.0.0.1:9988/#/wallboard
+  - host: admin.cloud8.8x8.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: admin
+          servicePort: 9988
+# * Jaeger Trace : http://127.0.0.1:16686/
+  - host: jaeger.cloud8.8x8.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: jaeger
+          servicePort: 16686
+# * Swagger UI : http://127.0.0.1:8080/
+  - host: swagger.cloud8.8x8.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: swagger
+          servicePort: 8080
+# * Hystrix (pointing to turbine) : http://127.0.0.1:9312/hystrix/monitor?stream=http%3A%2F%2Fturbine%3A8989%2Fturbine%2Fturbine.stream
+  - host: hystrix.cloud8.8x8.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: hystrix
+          servicePort: 9312
+# * RabbitMQ Admin : http://127.0.0.1:15672/
+  - host: rabbitmq.cloud8.8x8.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: rabbitmq
+          servicePort: 15672
+  - host: gatekeeper.cloud8.8x8.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: gatekeeper
+          servicePort: 1083

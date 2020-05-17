@@ -1,0 +1,48 @@
+# ---
+# kind: Namespace
+# apiVersion: v1
+# metadata:
+#   name: cloud8
+#   labels:
+#     stack: cloud8
+# ---
+# apiVersion: v1
+# kind: ResourceQuota
+# metadata:
+#   name: compute-quota
+#   namespace: cloud8
+# spec:
+#   hard:
+#     requests.cpu: "2"
+#     requests.memory: 6Gi
+#     limits.cpu: "2"
+#     limits.memory: 4Gi
+# ---
+# apiVersion: v1
+# kind: LimitRange
+# metadata:
+#   name: limits
+#   namespace: cloud8
+# spec:
+#   limits:
+#   - type: Container
+#     default:
+#       cpu: 200m
+#       memory: 512Mi
+#     defaultRequest:
+#       cpu: 100m
+#       memory: 256Mi
+# ---
+# apiVersion: v1
+# kind: ResourceQuota
+# metadata:
+#   name: object-quota
+#   namespace: cloud8
+# spec:
+#   hard:
+#     configmaps: "10"
+#     persistentvolumeclaims: "4"
+#     replicationcontrollers: "20"
+#     secrets: "10"
+#     services: "10"
+#     services.loadbalancers: "2"
