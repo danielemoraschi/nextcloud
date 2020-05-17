@@ -3,7 +3,7 @@
 This project assumes you have Kubernetes already running and `kubectl` properly set for one of the following environments:
 - Minkube
 - Kubernetes for Mac
-- AWS
+- AWS 
 
 ## Usage
 
