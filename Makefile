@@ -83,6 +83,16 @@ restart:
 	$(DOCKER-COMPOSE) $(COMPOSE) restart
 
 
+
+##
+##NEXTCLOUD #######################################################################
+##
+
+.PHONY: occ
+occ:			## bash in a running Docker machine: make occ cmd=<occ command>
+	$(DOCKER-COMPOSE) $(COMPOSE) exec -u www-data nextcloud php occ $(cmd)
+
+
 ##
 ##UTILS #######################################################################
 ##

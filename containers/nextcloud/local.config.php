@@ -85,13 +85,13 @@ $CONFIG = array(
         'class' => '\\OC\\Files\\ObjectStore\\S3',
         'arguments' => array(
             'bucket' => getenv('S3_BUCKET'),
-            'autocreate' => false,
+            'autocreate' => true,
             'key' => getenv('S3_KEY'),
             'secret' => getenv('S3_SECRET'),
             'port' => 443,
             'use_ssl' => true,
             'region' => getenv('S3_REGION'),
-            'use_path_style' => true
+            'use_path_style' => false
         )
     )
 
