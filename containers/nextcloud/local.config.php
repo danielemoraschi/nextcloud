@@ -11,6 +11,8 @@ $CONFIG = array(
         'nextcloud.lucazini.it',
     ),
 
+    'overwriteprotocol' =>getenv('NEXTCLOUD_PROTOCOL'),
+
     /**
      * Only register providers that have been explicitly enabled
      *
@@ -79,20 +81,5 @@ $CONFIG = array(
     'dbname' => getenv('MYSQL_DATABASE'),
     'dbuser' => getenv('MYSQL_USER'),
     'dbpassword' => getenv('MYSQL_PASSWORD'),
-    'dbtableprefix' => 'oc_',
-
-    'objectstore' => array(
-        'class' => '\\OC\\Files\\ObjectStore\\S3',
-        'arguments' => array(
-            'bucket' => getenv('S3_BUCKET'),
-            'autocreate' => true,
-            'key' => getenv('S3_KEY'),
-            'secret' => getenv('S3_SECRET'),
-            'port' => 443,
-            'use_ssl' => true,
-            'region' => getenv('S3_REGION'),
-            'use_path_style' => false
-        )
-    )
-
+    'dbtableprefix' => 'oc_'
 );

@@ -29,11 +29,8 @@ services:
     volumes:
       - dbmaster:/var/lib/mysql
       # - /etc/localtime:/etc/localtime:ro
-    environment:
-      - MYSQL_ROOT_PASSWORD
-      - MYSQL_PASSWORD
-      - MYSQL_DATABASE
-      - MYSQL_USER
+    env_file:
+      - ${ENV}
     networks:
       default:
         aliases:
@@ -44,19 +41,11 @@ services:
     image: local-nextcloud
     privileged: true
     restart: always
+    env_file:
+      - ${ENV}
     environment:
       - MC_HOST=memcached
       - MYSQL_HOST=dbmaster
-      - MYSQL_PASSWORD
-      - MYSQL_DATABASE
-      - MYSQL_USER
-      - S3_BUCKET
-      - S3_KEY
-      - S3_SECRET
-      - S3_REGION
-      # - NEXTCLOUD_ADMIN_USER
-      # - NEXTCLOUD_ADMIN_PASSWORD
-      - NEXTCLOUD_TRUSTED_DOMAINS
     depends_on:
       - memcached
       - dbmaster

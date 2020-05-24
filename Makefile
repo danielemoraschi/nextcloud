@@ -1,6 +1,6 @@
-ENV=dev
+ENV?=.env.dev
 DOCKER=docker
-COMPOSE=
+COMPOSE_ARGS=
 DOCKER-COMPOSE=docker-compose
 DOCKER-LOGS-TAIL=50
 THIS_FILE:=$(lastword $(MAKEFILE_LIST))
@@ -12,95 +12,84 @@ USR_GR=$(shell id -g)
 ##DEFAULT #####################################################################
 ##
 
-
 .PHONY: all
 all:			## Default. Display this help.
 all: help
-
 
 ##
 ##RUN #########################################################################
 ##
 
-
 .PHONY: install
-install:		## Start the services on your machine.
+install:		## Start the services on your machine, stopping any running instances first.
 install: stop up 
 
 .PHONY: reinstall
-reinstall:		## Start the services on your machine.
+reinstall:		## Restart as clean slate all the services on your machine.
 reinstall: cleanup build up 
 
 .PHONY: up
-up: 			## Start the services on your machine.
-	$(DOCKER-COMPOSE) $(COMPOSE) up #--no-deps
+up: 			## Just straight docker-compose up -f.
+	$(DOCKER-COMPOSE) $(COMPOSE_ARGS) up -f #--no-deps
 
 .PHONY: stop
 stop:			## Stop the running services.
-	$(DOCKER-COMPOSE) $(COMPOSE) stop
+	$(DOCKER-COMPOSE) $(COMPOSE_ARGS) stop
 	$(DOCKER) network prune -f
 
 .PHONY: down
 down: 			## Stop and remove the running services.
 down: stop
-	$(DOCKER-COMPOSE) $(COMPOSE) rm -vf
+	$(DOCKER-COMPOSE) $(COMPOSE_ARGS) rm -vf
 
 .PHONY: ps
 ps:			## Show all the running services.
-	$(DOCKER-COMPOSE) $(COMPOSE) ps
+	$(DOCKER-COMPOSE) $(COMPOSE_ARGS) ps
 
 .PHONY: logs
 logs:			## Output logs of the running services.
-	$(DOCKER-COMPOSE) $(COMPOSE) logs -f --tail=$(DOCKER-LOGS-TAIL)
+	$(DOCKER-COMPOSE) $(COMPOSE_ARGS) logs -f --tail=$(DOCKER-LOGS-TAIL)
 
 .PHONY: logs-nice
 logs-nice:		## Output logs of the running services.
-	$(DOCKER-COMPOSE) $(COMPOSE) logs -f --tail=$(DOCKER-LOGS-TAIL) | grep 'nginx_\|fpm' | grep -v 'agent-status\|status\|statuses'
+	$(DOCKER-COMPOSE) $(COMPOSE_ARGS) logs -f --tail=$(DOCKER-LOGS-TAIL) | grep 'nginx_\|fpm' | grep -v 'agent-status\|status\|statuses'
 
 .PHONY: logs-all
 logs-all:		## Output all the logs of the running services.
-	$(DOCKER-COMPOSE) $(COMPOSE) logs -f
+	$(DOCKER-COMPOSE) $(COMPOSE_ARGS) logs -f
 
 .PHONY: logs-php
 logs-php:		## Output all the logs of the running php-fpm services.
-	$(DOCKER-COMPOSE) $(COMPOSE) logs -f --tail=$(DOCKER-LOGS-TAIL) | grep "fpm"
+	$(DOCKER-COMPOSE) $(COMPOSE_ARGS) logs -f --tail=$(DOCKER-LOGS-TAIL) | grep "fpm"
 
 .PHONY: logs-nginx
 logs-nginx:		## Output all the logs of the running nginx services.
-	$(DOCKER-COMPOSE) $(COMPOSE) logs -f --tail=$(DOCKER-LOGS-TAIL) | grep "nginx_"
-
-.PHONY: reboot
-reboot:			## Stop, remove, and re-install services.
-reboot: down cleanup install
-
-.PHONY: full-reboot
-full-reboot:		## Stop, remove, wipe all, and re-start from scratch.
-full-reboot: down wipe build install
+	$(DOCKER-COMPOSE) $(COMPOSE_ARGS) logs -f --tail=$(DOCKER-LOGS-TAIL) | grep "nginx_"
 
 .PHONY: restart
 restart:		## Restart the running services.
 restart:
-	$(DOCKER-COMPOSE) $(COMPOSE) restart
-
-
+	$(DOCKER-COMPOSE) $(COMPOSE_ARGS) restart
 
 ##
 ##NEXTCLOUD #######################################################################
 ##
 
 .PHONY: occ
-occ:			## bash in a running Docker machine: make occ cmd=<occ command>
-	$(DOCKER-COMPOSE) $(COMPOSE) exec -u www-data nextcloud php occ $(cmd)
-
+occ:			## Run NextCloud OCC cli management tool. Usage: make occ cmd=<occ command>
+	$(DOCKER-COMPOSE) $(COMPOSE_ARGS) exec -u www-data nextcloud php occ $(cmd)
 
 ##
 ##UTILS #######################################################################
 ##
 
+.PHONY: config
+config:			## Check docker-compose resolved configuration
+	$(DOCKER-COMPOSE) $(COMPOSE_ARGS) config
 
 .PHONY: cli
 cli:			## bash in a running Docker machine: make cli id=<docker_image_name>
-	$(DOCKER-COMPOSE) $(COMPOSE) exec $(id) bash
+	$(DOCKER-COMPOSE) $(COMPOSE_ARGS) exec $(id) bash
 
 .PHONY: stats
 stats:			## Get resource usage stats of all running services
@@ -108,25 +97,22 @@ stats:			## Get resource usage stats of all running services
 
 .PHONY: restart-service
 restart-service:	## Restart a running Docker machine: make restart-service id=<docker_image_name>
-	$(DOCKER-COMPOSE) $(COMPOSE) stop $(id)
-	$(DOCKER-COMPOSE) $(COMPOSE) kill $(id)
-	$(DOCKER-COMPOSE) $(COMPOSE) rm -f $(id)
-	$(DOCKER-COMPOSE) $(COMPOSE) up -d $(id)
+	$(DOCKER-COMPOSE) $(COMPOSE_ARGS) stop $(id)
+	$(DOCKER-COMPOSE) $(COMPOSE_ARGS) kill $(id)
+	$(DOCKER-COMPOSE) $(COMPOSE_ARGS) rm -f $(id)
+	$(DOCKER-COMPOSE) $(COMPOSE_ARGS) up -d $(id)
 
 .PHONY: stop-service
 stop-service:		## Stop a running Docker machine: make stop-service id=<docker_image_name>
-	$(DOCKER-COMPOSE) $(COMPOSE) stop $(id)
-
+	$(DOCKER-COMPOSE) $(COMPOSE_ARGS) stop $(id)
 
 ##
 ##BUILD ########################################################################
 ##
 
-
 .PHONY: build
 build:			## Build all the Docker images defined in the docker-compose files.
-	$(DOCKER-COMPOSE) $(COMPOSE) build
-
+	$(DOCKER-COMPOSE) $(COMPOSE_ARGS) build
 
 ##
 ##SYS UTILS ###################################################################
