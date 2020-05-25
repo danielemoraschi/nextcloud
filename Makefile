@@ -1,5 +1,5 @@
 ENV?=.env.dev
-include $(ENV)
+-include $(ENV)
 
 DOCKER=docker
 COMPOSE_ARGS=
@@ -92,6 +92,11 @@ maintenance-off:	## Maintenance mode OFF
 db-dump:		## Create database dump. Using `bash -c '...'` otherwise the output would try to go the host.
 	$(DOCKER-COMPOSE) $(COMPOSE_ARGS) exec dbmaster bash -c 'mysqldump --single-transaction -h 127.0.0.1 -u $(MYSQL_USER) -p$(MYSQL_PASSWORD) $(MYSQL_DATABASE) > /var/lib/mysql/BACKUP.nextcloud.database.sql'
 
+.PHONY: post-setup
+post-setup:		## Post Nextcloud database optimisation: missing indexes and conversion to big int for some columns
+	$(DOCKER-COMPOSE) $(COMPOSE_ARGS) exec -u www-data nextcloud php occ db:add-missing-indices
+	$(DOCKER-COMPOSE) $(COMPOSE_ARGS) exec -u www-data nextcloud php occ db:convert-filecache-bigint
+
 ##
 ##UTILS #######################################################################
 ##
@@ -144,3 +149,6 @@ wipe: cleanup		## Warning! This will remove the data files and ALL the Docker im
 
 help:			## Show this help.
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
+	@echo ""
+	@echo "\\033[0;32mEnvironment file: $(ENV)\\033[0;39m"
+	@echo ""
