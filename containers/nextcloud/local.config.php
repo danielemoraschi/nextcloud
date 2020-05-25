@@ -81,5 +81,10 @@ $CONFIG = array(
     'dbname' => getenv('MYSQL_DATABASE'),
     'dbuser' => getenv('MYSQL_USER'),
     'dbpassword' => getenv('MYSQL_PASSWORD'),
-    'dbtableprefix' => 'oc_'
+    'dbtableprefix' => 'oc_',
+
+    "log_type" => "syslog",
+    "logfile" => "",
+    "loglevel" => "3",
+    "logdateformat" => "F d, Y H:i:s"
 );

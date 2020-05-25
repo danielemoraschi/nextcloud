@@ -1,4 +1,6 @@
 ENV?=.env.dev
+include $(ENV)
+
 DOCKER=docker
 COMPOSE_ARGS=
 DOCKER-COMPOSE=docker-compose
@@ -77,6 +79,18 @@ restart:
 .PHONY: occ
 occ:			## Run NextCloud OCC cli management tool. Usage: make occ cmd=<occ command>
 	$(DOCKER-COMPOSE) $(COMPOSE_ARGS) exec -u www-data nextcloud php occ $(cmd)
+
+.PHONY: maintenance-on
+maintenance-on:		## Maintenance mode ON
+	$(DOCKER-COMPOSE) $(COMPOSE_ARGS) exec -u www-data nextcloud php occ maintenance:mode --on
+
+.PHONY: maintenance-off
+maintenance-off:	## Maintenance mode OFF
+	$(DOCKER-COMPOSE) $(COMPOSE_ARGS) exec -u www-data nextcloud php occ maintenance:mode --off
+
+.PHONY: db-dump
+db-dump:		## Create database dump. Using `bash -c '...'` otherwise the output would try to go the host.
+	$(DOCKER-COMPOSE) $(COMPOSE_ARGS) exec dbmaster bash -c 'mysqldump --single-transaction -h 127.0.0.1 -u $(MYSQL_USER) -p$(MYSQL_PASSWORD) $(MYSQL_DATABASE) > /var/lib/mysql/BACKUP.nextcloud.database.sql'
 
 ##
 ##UTILS #######################################################################
