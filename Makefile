@@ -35,7 +35,6 @@ up: 			## Just straight docker-compose up -f.
 .PHONY: stop
 stop:			## Stop the running services.
 	$(DOCKER-COMPOSE) $(COMPOSE_ARGS) stop
-	$(DOCKER) network prune -f
 
 .PHONY: down
 down: 			## Stop and remove the running services.
@@ -121,6 +120,7 @@ build:			## Build all the Docker images defined in the docker-compose files.
 .PHONY: cleanup
 cleanup:		## Remove all the data files and Docker images.
 cleanup: down
+	$(DOCKER) network prune -f
 	$(DOCKER) volume prune
 
 .PHONY: wipe
