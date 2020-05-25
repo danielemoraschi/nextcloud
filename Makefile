@@ -30,7 +30,7 @@ reinstall: cleanup build up
 
 .PHONY: up
 up: 			## Just straight docker-compose up -f.
-	$(DOCKER-COMPOSE) $(COMPOSE_ARGS) up #--no-deps
+	$(DOCKER-COMPOSE) $(COMPOSE_ARGS) up -d #--no-deps
 
 .PHONY: stop
 stop:			## Stop the running services.
